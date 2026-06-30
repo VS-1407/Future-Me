@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidPrediction(data) {
+      return data.userId is string 
+          && data.userId.size() <= 128
+          && data.goal is string
+          && data.goal.size() <= 1000
+          && data.progress is number
+          && data.progress >= 0
+          && data.progress <= 100
+          && data.hours is number
+          && data.hours >= 0
+          && data.hours <= 168
+          && data.score is int
+          && data.score >= 0
+          && data.score <= 100
+          && data.riskLabel is string
+          && data.riskLabel.size() <= 100
+          && data.verdict is string
+          && data.verdict.size() <= 2000
+          && data.createdAt == request.time;
+    }
+
+    match /predictions/{predictionId} {
+      allow create: if isSignedIn() 
+                    && isOwner(request.resource.data.userId)
+                    && request.resource.data.keys().hasAll(['userId', 'goal', 'progress', 'hours', 'score', 'riskLabel', 'verdict', 'createdAt'])
+                    && request.resource.data.keys().size() == 8
+                    && isValidPrediction(request.resource.data);
+                    
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

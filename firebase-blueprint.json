@@ -1,0 +1,51 @@
+{
+  "entities": {
+    "Prediction": {
+      "title": "Prediction",
+      "description": "Records goal updates and predicted timeline risk parameters over time.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The unique operator identifier."
+        },
+        "goal": {
+          "type": "string",
+          "description": "The target goal description."
+        },
+        "progress": {
+          "type": "number",
+          "description": "Current goal completion progress."
+        },
+        "hours": {
+          "type": "number",
+          "description": "Temporal hours allocated."
+        },
+        "score": {
+          "type": "integer",
+          "description": "Calculated prognosis stability score."
+        },
+        "riskLabel": {
+          "type": "string",
+          "description": "Risk profile level (Safe, Medium Risk, Critical)."
+        },
+        "verdict": {
+          "type": "string",
+          "description": "Prognosis outcome statement."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timeline log instant."
+        }
+      },
+      "required": ["userId", "goal", "progress", "hours", "score", "riskLabel", "verdict"]
+    }
+  },
+  "firestore": {
+    "/predictions/{predictionId}": {
+      "schema": "Prediction",
+      "description": "Historical timeline records for user predictions."
+    }
+  }
+}

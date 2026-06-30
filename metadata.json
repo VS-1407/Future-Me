@@ -1,0 +1,6 @@
+{
+  "name": "Future Me",
+  "description": "Predict deadline risk and execute a customized rescue plan before time runs out.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
